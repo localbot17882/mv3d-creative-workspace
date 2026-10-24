@@ -51,4 +51,3 @@
  return {types,settings,validate,descendants,removeNodes};
 
 });
-

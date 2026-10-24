@@ -29,7 +29,7 @@ if(!(Test-Path -LiteralPath $npm)){
 $env:PATH="$nodeFolder;$env:PATH"
 $env:PIP_CACHE_DIR=Join-Path $root '.cache/pip'
 $env:npm_config_cache=Join-Path $root '.cache/npm'
-$env:ELECTRON_CACHE=Join-Path $root '.cache/electron' 
+$env:ELECTRON_CACHE=Join-Path $root '.cache/electron'
 Set-Location $root
 if(Test-Path -LiteralPath 'package-lock.json'){Run $npm @('ci')}else{Run $npm @('install')}
 Run (Join-Path $nodeFolder 'node.exe') @('node_modules/electron/install.js')

@@ -298,4 +298,3 @@ function initializeCanvas(){
  canvasController={fit,flush,openProject:async id=>{await flush();project=await api.canvasLoad(id);selected=null;selectedNodes.clear();states={};$('canvasName').value=project.name;await projects();render();},open,importCharacter,import:importMedia,importPath:async file=>{await open();await flush();const a=await api.canvasImport({project:project.id,file});if(a){project.assets.push(a);const n=add('image');n.asset=a.id;invalidate(n.id);render();await flush();}},type:()=>node()?.type};
 
 }
-
