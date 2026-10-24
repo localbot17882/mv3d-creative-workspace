@@ -1,0 +1,41 @@
+[
+  {
+    "name": "qwen_image_2.1_turbo_int8_convrot.safetensors",
+    "file": "qwen_image_2.1_turbo_int8_convrot.safetensors",
+    "dir": "diffusion_models",
+    "repo": "Comfy-Org/Qwen-Image-2.1",
+    "remote": "diffusion_models/qwen_image_2.1_turbo_int8_convrot.safetensors",
+    "rev": "0217efd1d9c9452e84f6448903d6e21bfa171ffd",
+    "size": 7256787829,
+    "sha": "8144a0182964aa8403ad6dbc011db837304167d235161b9aabaa8532e967314c",
+    "modes": [
+      "studio"
+    ]
+  },
+  {
+    "name": "qwen3vl_8b_w4a8.safetensors",
+    "file": "qwen3vl_8b_w4a8.safetensors",
+    "dir": "text_encoders",
+    "repo": "Comfy-Org/Qwen-Image-2.1",
+    "remote": "text_encoders/qwen3vl_8b_w4a8.safetensors",
+    "rev": "0217efd1d9c9452e84f6448903d6e21bfa171ffd",
+    "size": 6312105364,
+    "sha": "7754425e55e7bea2bfde4dde59a4cc236cb44e5ee9c215ea66ef8d47012824eb",
+    "modes": [
+      "studio"
+    ]
+  },
+  {
+    "name": "qwen_image_2.1_vae_bf16.safetensors",
+    "file": "qwen_image_2.1_vae_bf16.safetensors",
+    "dir": "vae",
+    "repo": "Comfy-Org/Qwen-Image-2.1",
+    "remote": "vae/qwen_image_2.1_vae_bf16.safetensors",
+    "rev": "0217efd1d9c9452e84f6448903d6e21bfa171ffd",
+    "size": 675509688,
+    "sha": "bb21f7473051e1ac368515dd3f2e15cd44d7a11748ee8823e1ddca3e4876b7c9",
+    "modes": [
+      "studio"
+    ]
+  }
+]

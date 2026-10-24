@@ -1,0 +1,942 @@
+{
+  "audio-2": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "2": {
+      "class_type": "LTXVAudioOnlyModel",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ]
+      }
+    },
+    "3": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "type": "ltxv",
+        "device": "default"
+      }
+    },
+    "4": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "ltx-2.5-audio-vae-bf16.safetensors"
+      }
+    },
+    "5": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "Wind in a forest. No speech."
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "distortion, clipping, crackling, low quality"
+      }
+    },
+    "7": {
+      "class_type": "LTXVConditioning",
+      "inputs": {
+        "positive": [
+          "5",
+          0
+        ],
+        "negative": [
+          "6",
+          0
+        ],
+        "frame_rate": 24
+      }
+    },
+    "8": {
+      "class_type": "LTXVAudioOnlyEmptyVideoLatent",
+      "inputs": {}
+    },
+    "9": {
+      "class_type": "LTXVEmptyLatentAudio",
+      "inputs": {
+        "audio_vae": [
+          "4",
+          0
+        ],
+        "frames_number": 49,
+        "frame_rate": 24,
+        "batch_size": 1
+      }
+    },
+    "10": {
+      "class_type": "LTXVConcatAVLatent",
+      "inputs": {
+        "video_latent": [
+          "8",
+          0
+        ],
+        "audio_latent": [
+          "9",
+          0
+        ]
+      }
+    },
+    "11": {
+      "class_type": "CFGGuider",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "7",
+          0
+        ],
+        "negative": [
+          "7",
+          1
+        ],
+        "cfg": 1
+      }
+    },
+    "12": {
+      "class_type": "RandomNoise",
+      "inputs": {
+        "noise_seed": 42
+      }
+    },
+    "13": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler_ancestral"
+      }
+    },
+    "14": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "1.0, 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+      }
+    },
+    "15": {
+      "class_type": "SamplerCustomAdvanced",
+      "inputs": {
+        "noise": [
+          "12",
+          0
+        ],
+        "guider": [
+          "11",
+          0
+        ],
+        "sampler": [
+          "13",
+          0
+        ],
+        "sigmas": [
+          "14",
+          0
+        ],
+        "latent_image": [
+          "10",
+          0
+        ]
+      }
+    },
+    "16": {
+      "class_type": "LTXVSeparateAVLatent",
+      "inputs": {
+        "av_latent": [
+          "15",
+          0
+        ]
+      }
+    },
+    "17": {
+      "class_type": "LTXVAudioVAEDecode",
+      "inputs": {
+        "samples": [
+          "16",
+          1
+        ],
+        "audio_vae": [
+          "4",
+          0
+        ]
+      }
+    },
+    "18": {
+      "class_type": "ComfyLabSaveAudioWAV",
+      "inputs": {
+        "audio": [
+          "17",
+          0
+        ],
+        "filename_prefix": "Comfy Lab/Audio/ltx25"
+      }
+    }
+  },
+  "audio-4": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "2": {
+      "class_type": "LTXVAudioOnlyModel",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ]
+      }
+    },
+    "3": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "type": "ltxv",
+        "device": "default"
+      }
+    },
+    "4": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "ltx-2.5-audio-vae-bf16.safetensors"
+      }
+    },
+    "5": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "Wind in a forest. No speech."
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "distortion, clipping, crackling, low quality"
+      }
+    },
+    "7": {
+      "class_type": "LTXVConditioning",
+      "inputs": {
+        "positive": [
+          "5",
+          0
+        ],
+        "negative": [
+          "6",
+          0
+        ],
+        "frame_rate": 24
+      }
+    },
+    "8": {
+      "class_type": "LTXVAudioOnlyEmptyVideoLatent",
+      "inputs": {}
+    },
+    "9": {
+      "class_type": "LTXVEmptyLatentAudio",
+      "inputs": {
+        "audio_vae": [
+          "4",
+          0
+        ],
+        "frames_number": 97,
+        "frame_rate": 24,
+        "batch_size": 1
+      }
+    },
+    "10": {
+      "class_type": "LTXVConcatAVLatent",
+      "inputs": {
+        "video_latent": [
+          "8",
+          0
+        ],
+        "audio_latent": [
+          "9",
+          0
+        ]
+      }
+    },
+    "11": {
+      "class_type": "CFGGuider",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "7",
+          0
+        ],
+        "negative": [
+          "7",
+          1
+        ],
+        "cfg": 1
+      }
+    },
+    "12": {
+      "class_type": "RandomNoise",
+      "inputs": {
+        "noise_seed": 42
+      }
+    },
+    "13": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler_ancestral"
+      }
+    },
+    "14": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "1.0, 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+      }
+    },
+    "15": {
+      "class_type": "SamplerCustomAdvanced",
+      "inputs": {
+        "noise": [
+          "12",
+          0
+        ],
+        "guider": [
+          "11",
+          0
+        ],
+        "sampler": [
+          "13",
+          0
+        ],
+        "sigmas": [
+          "14",
+          0
+        ],
+        "latent_image": [
+          "10",
+          0
+        ]
+      }
+    },
+    "16": {
+      "class_type": "LTXVSeparateAVLatent",
+      "inputs": {
+        "av_latent": [
+          "15",
+          0
+        ]
+      }
+    },
+    "17": {
+      "class_type": "LTXVAudioVAEDecode",
+      "inputs": {
+        "samples": [
+          "16",
+          1
+        ],
+        "audio_vae": [
+          "4",
+          0
+        ]
+      }
+    },
+    "18": {
+      "class_type": "ComfyLabSaveAudioWAV",
+      "inputs": {
+        "audio": [
+          "17",
+          0
+        ],
+        "filename_prefix": "Comfy Lab/Audio/ltx25"
+      }
+    }
+  },
+  "audio-10": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "2": {
+      "class_type": "LTXVAudioOnlyModel",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ]
+      }
+    },
+    "3": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "type": "ltxv",
+        "device": "default"
+      }
+    },
+    "4": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "ltx-2.5-audio-vae-bf16.safetensors"
+      }
+    },
+    "5": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "Wind in a forest. No speech."
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "distortion, clipping, crackling, low quality"
+      }
+    },
+    "7": {
+      "class_type": "LTXVConditioning",
+      "inputs": {
+        "positive": [
+          "5",
+          0
+        ],
+        "negative": [
+          "6",
+          0
+        ],
+        "frame_rate": 24
+      }
+    },
+    "8": {
+      "class_type": "LTXVAudioOnlyEmptyVideoLatent",
+      "inputs": {}
+    },
+    "9": {
+      "class_type": "LTXVEmptyLatentAudio",
+      "inputs": {
+        "audio_vae": [
+          "4",
+          0
+        ],
+        "frames_number": 241,
+        "frame_rate": 24,
+        "batch_size": 1
+      }
+    },
+    "10": {
+      "class_type": "LTXVConcatAVLatent",
+      "inputs": {
+        "video_latent": [
+          "8",
+          0
+        ],
+        "audio_latent": [
+          "9",
+          0
+        ]
+      }
+    },
+    "11": {
+      "class_type": "CFGGuider",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "7",
+          0
+        ],
+        "negative": [
+          "7",
+          1
+        ],
+        "cfg": 1
+      }
+    },
+    "12": {
+      "class_type": "RandomNoise",
+      "inputs": {
+        "noise_seed": 42
+      }
+    },
+    "13": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler_ancestral"
+      }
+    },
+    "14": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "1.0, 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+      }
+    },
+    "15": {
+      "class_type": "SamplerCustomAdvanced",
+      "inputs": {
+        "noise": [
+          "12",
+          0
+        ],
+        "guider": [
+          "11",
+          0
+        ],
+        "sampler": [
+          "13",
+          0
+        ],
+        "sigmas": [
+          "14",
+          0
+        ],
+        "latent_image": [
+          "10",
+          0
+        ]
+      }
+    },
+    "16": {
+      "class_type": "LTXVSeparateAVLatent",
+      "inputs": {
+        "av_latent": [
+          "15",
+          0
+        ]
+      }
+    },
+    "17": {
+      "class_type": "LTXVAudioVAEDecode",
+      "inputs": {
+        "samples": [
+          "16",
+          1
+        ],
+        "audio_vae": [
+          "4",
+          0
+        ]
+      }
+    },
+    "18": {
+      "class_type": "ComfyLabSaveAudioWAV",
+      "inputs": {
+        "audio": [
+          "17",
+          0
+        ],
+        "filename_prefix": "Comfy Lab/Audio/ltx25"
+      }
+    }
+  },
+  "audio-20": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "2": {
+      "class_type": "LTXVAudioOnlyModel",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ]
+      }
+    },
+    "3": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "type": "ltxv",
+        "device": "default"
+      }
+    },
+    "4": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "ltx-2.5-audio-vae-bf16.safetensors"
+      }
+    },
+    "5": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "Wind in a forest. No speech."
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "distortion, clipping, crackling, low quality"
+      }
+    },
+    "7": {
+      "class_type": "LTXVConditioning",
+      "inputs": {
+        "positive": [
+          "5",
+          0
+        ],
+        "negative": [
+          "6",
+          0
+        ],
+        "frame_rate": 24
+      }
+    },
+    "8": {
+      "class_type": "LTXVAudioOnlyEmptyVideoLatent",
+      "inputs": {}
+    },
+    "9": {
+      "class_type": "LTXVEmptyLatentAudio",
+      "inputs": {
+        "audio_vae": [
+          "4",
+          0
+        ],
+        "frames_number": 481,
+        "frame_rate": 24,
+        "batch_size": 1
+      }
+    },
+    "10": {
+      "class_type": "LTXVConcatAVLatent",
+      "inputs": {
+        "video_latent": [
+          "8",
+          0
+        ],
+        "audio_latent": [
+          "9",
+          0
+        ]
+      }
+    },
+    "11": {
+      "class_type": "CFGGuider",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "7",
+          0
+        ],
+        "negative": [
+          "7",
+          1
+        ],
+        "cfg": 1
+      }
+    },
+    "12": {
+      "class_type": "RandomNoise",
+      "inputs": {
+        "noise_seed": 42
+      }
+    },
+    "13": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler_ancestral"
+      }
+    },
+    "14": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "1.0, 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+      }
+    },
+    "15": {
+      "class_type": "SamplerCustomAdvanced",
+      "inputs": {
+        "noise": [
+          "12",
+          0
+        ],
+        "guider": [
+          "11",
+          0
+        ],
+        "sampler": [
+          "13",
+          0
+        ],
+        "sigmas": [
+          "14",
+          0
+        ],
+        "latent_image": [
+          "10",
+          0
+        ]
+      }
+    },
+    "16": {
+      "class_type": "LTXVSeparateAVLatent",
+      "inputs": {
+        "av_latent": [
+          "15",
+          0
+        ]
+      }
+    },
+    "17": {
+      "class_type": "LTXVAudioVAEDecode",
+      "inputs": {
+        "samples": [
+          "16",
+          1
+        ],
+        "audio_vae": [
+          "4",
+          0
+        ]
+      }
+    },
+    "18": {
+      "class_type": "ComfyLabSaveAudioWAV",
+      "inputs": {
+        "audio": [
+          "17",
+          0
+        ],
+        "filename_prefix": "Comfy Lab/Audio/ltx25"
+      }
+    }
+  },
+  "audio-30": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "2": {
+      "class_type": "LTXVAudioOnlyModel",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ]
+      }
+    },
+    "3": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "type": "ltxv",
+        "device": "default"
+      }
+    },
+    "4": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "ltx-2.5-audio-vae-bf16.safetensors"
+      }
+    },
+    "5": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "Wind in a forest. No speech."
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "distortion, clipping, crackling, low quality"
+      }
+    },
+    "7": {
+      "class_type": "LTXVConditioning",
+      "inputs": {
+        "positive": [
+          "5",
+          0
+        ],
+        "negative": [
+          "6",
+          0
+        ],
+        "frame_rate": 24
+      }
+    },
+    "8": {
+      "class_type": "LTXVAudioOnlyEmptyVideoLatent",
+      "inputs": {}
+    },
+    "9": {
+      "class_type": "LTXVEmptyLatentAudio",
+      "inputs": {
+        "audio_vae": [
+          "4",
+          0
+        ],
+        "frames_number": 721,
+        "frame_rate": 24,
+        "batch_size": 1
+      }
+    },
+    "10": {
+      "class_type": "LTXVConcatAVLatent",
+      "inputs": {
+        "video_latent": [
+          "8",
+          0
+        ],
+        "audio_latent": [
+          "9",
+          0
+        ]
+      }
+    },
+    "11": {
+      "class_type": "CFGGuider",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "7",
+          0
+        ],
+        "negative": [
+          "7",
+          1
+        ],
+        "cfg": 1
+      }
+    },
+    "12": {
+      "class_type": "RandomNoise",
+      "inputs": {
+        "noise_seed": 42
+      }
+    },
+    "13": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler_ancestral"
+      }
+    },
+    "14": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "1.0, 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+      }
+    },
+    "15": {
+      "class_type": "SamplerCustomAdvanced",
+      "inputs": {
+        "noise": [
+          "12",
+          0
+        ],
+        "guider": [
+          "11",
+          0
+        ],
+        "sampler": [
+          "13",
+          0
+        ],
+        "sigmas": [
+          "14",
+          0
+        ],
+        "latent_image": [
+          "10",
+          0
+        ]
+      }
+    },
+    "16": {
+      "class_type": "LTXVSeparateAVLatent",
+      "inputs": {
+        "av_latent": [
+          "15",
+          0
+        ]
+      }
+    },
+    "17": {
+      "class_type": "LTXVAudioVAEDecode",
+      "inputs": {
+        "samples": [
+          "16",
+          1
+        ],
+        "audio_vae": [
+          "4",
+          0
+        ]
+      }
+    },
+    "18": {
+      "class_type": "ComfyLabSaveAudioWAV",
+      "inputs": {
+        "audio": [
+          "17",
+          0
+        ],
+        "filename_prefix": "Comfy Lab/Audio/ltx25"
+      }
+    }
+  }
+}

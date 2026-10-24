@@ -1,0 +1,19 @@
+{
+  "files_scanned": 193,
+  "source_files": 196,
+  "potential_secret_files": [],
+  "private_directories_excluded": [
+    "Data",
+    "Results",
+    "Personajes",
+    "ComfyUI",
+    "Tools",
+    "Python",
+    "Backups",
+    ".venv",
+    ".cache",
+    ".tools",
+    "node_modules"
+  ],
+  "passed": true
+}

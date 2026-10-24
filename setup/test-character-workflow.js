@@ -1,0 +1,18 @@
+'use strict';
+const assert=require('node:assert/strict');
+const {checkedCharacter,buildCharacter}=require('../App/resources/app/character-workflow');
+const base={prompt:'An adult character in natural daylight',width:512,height:768,seed:9401};
+const created=buildCharacter(base),nodes=Object.values(created.graph);
+assert.equal(created.settings.steps,8);
+assert.equal(created.graph['18'].class_type,'SaveImage');
+assert(nodes.some(n=>n.class_type==='UNETLoader'&&n.inputs.unet_name==='z_image_turbo_bf16.safetensors'));
+assert(nodes.some(n=>n.class_type==='CLIPLoader'&&n.inputs.type==='lumina2'));
+assert(!nodes.some(n=>n.class_type==='LoadImage'));
+const variation=buildCharacter({...base,mode:'reference'},'reference.png'),refNodes=Object.values(variation.graph);
+assert.equal(variation.settings.steps,4);
+assert(refNodes.some(n=>n.class_type==='LoadImage'&&n.inputs.image==='reference.png'));
+assert(refNodes.some(n=>n.class_type==='ReferenceLatent'));
+assert(refNodes.some(n=>n.class_type==='CLIPTextEncode'&&n.inputs.text.includes('Preserve their facial identity')));
+assert.throws(()=>buildCharacter({...base,mode:'reference'}),/reference/);
+for(const bad of [{width:513},{height:2000},{seed:-1},{steps:0},{mode:'unknown'},{prompt:''}])assert.throws(()=>checkedCharacter({...base,...bad}));
+console.log('Characters: new portrait, identity reference conditioning, output and invalid settings passed.');

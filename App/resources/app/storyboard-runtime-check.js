@@ -1,0 +1,9 @@
+'use strict';
+const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+module.exports=async function({root,invoke}){
+ const folder=path.join(root,'Results/Storyboard-Tests-2026-10-23'),report={started:new Date().toISOString(),tests:[],gpuGeneration:false};await fs.mkdir(folder,{recursive:true});
+ try{const plan=await invoke('assistant-storyboard',{idea:'A short calm architectural film about one timber house in a pine forest at morning. Begin with a wide exterior and end at the entrance. Two shots, no people.',count:2,aspectRatio:'16:9'});assert.equal(plan.shots.length,2);report.tests.push({name:'Gemini storyboard planning',passed:true});await fs.writeFile(path.join(folder,'plan.json'),JSON.stringify(plan,null,2));
+  let p=await invoke('canvas-new','Storyboard · verified plan');p.storyboard={version:1,idea:'A timber house in a pine forest. Two calm architectural shots.',aspectRatio:'16:9',shots:[]};for(const shot of plan.shots)require('./storyboard-model').append(p,shot,'16:9',()=>crypto.randomUUID(),require('./canvas-graph').settings);p=await invoke('canvas-save',p);const restored=await invoke('canvas-load',p.id);assert.equal(restored.storyboard.shots.length,2);assert.equal(restored.nodes.length,4);assert.equal(restored.edges.length,3);report.project=p.id;report.tests.push({name:'Native save and reload with connected image/video nodes',passed:true});
+  await assert.rejects(()=>invoke('canvas-run',{project:p.id,target:restored.storyboard.shots[0].videoNode}),/Approve/);report.tests.push({name:'Native unapproved animation rejected before generation',passed:true});report.passed=true;
+ }catch(e){report.passed=false;report.error=e.message;}report.finished=new Date().toISOString();await fs.writeFile(path.join(folder,'runtime-results.json'),JSON.stringify(report,null,2));
+};

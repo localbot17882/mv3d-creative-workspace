@@ -1,0 +1,38 @@
+<main id="videoApp" hidden>
+ <aside>
+  <button id="videoBack" class="secondary">← Image tools</button>
+  <h2>VIDEO <span class="videoLocal">LOCAL</span></h2>
+  <p class="hint">LTX 2.5 · Local video tools</p>
+<label for="videoTool">Video tool</label><select id="videoTool"><option value="image">Image to video</option><option value="layout">3D Blocking → Render</option><option value="refine">Refine Video · detail / upscale</option></select>
+<div id="guidedInputs" hidden><button id="videoChooseClip" class="secondary">Open source video</button><p id="videoClipInfo" class="hint">No video loaded</p><video id="guidedPreview" controls muted preload="metadata" hidden></video><p id="guidedHelp" class="hint"></p></div>
+  <button id="videoChoose" class="secondary">Open image</button>
+  <button id="videoCurrent" class="secondary">Use current image / result</button>
+  <p id="videoFile" class="hint">No image loaded</p>
+  <label for="videoPrompt">Motion prompt</label>
+  <textarea id="videoPrompt" rows="4" maxlength="4000" placeholder="A slow cinematic camera push towards the building. Gentle movement in the trees. Preserve the architecture.">A slow cinematic camera push towards the building. Gentle movement in the trees. Preserve the architecture and straight lines.</textarea>
+  <label id="videoFullDurationLabel" class="peopleToggle" hidden><input id="videoFullDuration" type="checkbox" checked> Full input video · automatic duration</label>
+  <div class="row"><label for="videoDuration">Duration</label><select id="videoDuration"><option value="2">2 seconds · start here</option><option value="4">4 seconds</option><option value="6">6 seconds</option><option value="8">8 seconds</option><option value="10">10 seconds</option></select></div>
+  <div class="row"><label for="videoResolution">Resolution</label><select id="videoResolution"><option value="small">512 × 320 · test</option><option value="medium">768 × 448</option><option value="hd">1024 × 576 · demanding</option><option value="large">1280 × 768 · high risk</option><option value="full">1920 × 1088 · very high risk</option></select></div>
+  <div class="row"><label for="videoQuality">Quality</label><select id="videoQuality"><option value="draft">Draft · 8 steps</option><option value="refined">Refined · upscale + extra pass</option></select></div>
+  <small>24 fps. The model uses 8n + 1 frames; duration is approximate. Images are fitted with borders where needed.</small>
+  <label class="peopleToggle"><input id="videoAudio" type="checkbox">Generate sound</label>
+  <details><summary>Advanced options</summary><div class="row"><label for="videoSeed">Seed</label><input id="videoSeed" type="number" min="0" max="4294967295" value="42"></div><button id="videoSeedLock" aria-pressed="true">Seed locked</button><button id="videoRandom" class="secondary">Random seed</button><label for="videoTextDevice">Text processing</label><select id="videoTextDevice"><option value="auto">Automatic · faster</option><option value="cpu">Low GPU use · much slower</option></select></details>
+  <div id="guidedParameters" hidden>
+<label for="videoLoraStrength">LoRA strength <output id="videoLoraStrengthValue">1.00</output></label><input id="videoLoraStrength" type="range" min="0" max="1.5" step="0.05" value="1"><small>1.00 is the intended default. Lower values reduce the adapter's influence; higher values can introduce artifacts.</small>
+<label for="videoGuideStrength">Source guidance <output id="videoGuideStrengthValue">1.00</output></label><input id="videoGuideStrength" type="range" min="0.1" max="1" step="0.05" value="1">
+<label class="peopleToggle"><input id="videoPreserveAudio" type="checkbox" checked>Keep source audio</label>
+<details id="refineAdvanced"><summary>Refine processing options</summary><label for="videoTile">Processing tile</label><select id="videoTile"><option value="trained">1024 × 576 · trained size</option><option value="small">512 × 320 · lower memory / experimental</option></select><label for="videoOverlap">Tile overlap <output id="videoOverlapValue">50%</output></label><input id="videoOverlap" type="range" min="0.5" max="0.75" step="0.05" value="0.5"><label for="videoWindow">Temporal window</label><select id="videoWindow"><option value="25">25 frames · lower memory</option><option value="49" selected>49 frames · short test</option><option value="97">97 frames · official default</option></select><small>Smaller tiles / windows may change the result. CFG 1 and the distilled 8-step schedule are kept fixed.</small></details>
+</div><p id="videoRisk" role="status" class="videoRisk"></p>
+  <button id="videoGenerate" class="primary" disabled>Generate video ↗</button>
+  <button id="videoCancel" class="secondary" hidden>Cancel operation</button>
+  <details id="videoSetup"><summary>Local engine and models</summary><p id="videoReadiness" class="hint">Checking local installation…</p><button id="videoStart" class="secondary">Start ComfyUI</button><button id="videoRestart" class="secondary">Restart ComfyUI</button><button id="videoConnect" class="secondary">Connect Hugging Face</button><button id="videoInstall" class="secondary">Install LTX 2.5 models</button><small id="videoSizeInfo">Files and results stay on F:.</small></details>
+ </aside>
+ <section class="workspace videoWorkspace">
+  <div class="videoHeading"><div><p class="eyebrow">COMFY LAB / MOTION STUDIO</p><h1>Bring your render to life.</h1></div><button id="videoHistoryRefresh">Refresh history</button></div>
+  <div class="videoStage"><img id="videoSource" alt="Source image for local video" hidden><video id="videoPlayer" controls preload="metadata" hidden></video><div id="videoEmpty"><strong>LTX 2.5</strong><p>Load a render and describe the movement.<br>Your video is generated on this computer.</p></div></div>
+  <div class="actions"><button id="videoShowSource" disabled>Source image</button><button id="videoShowResult" disabled>Video result</button><button id="videoSave" disabled>Save MP4</button><button id="videoExport" disabled>Export workflow</button></div>
+  <p id="videoMessage" role="status">Start with a short, low-resolution test. Larger settings may exceed your GPU memory.</p><progress id="videoProgress" hidden max="100"></progress>
+  <h2>Video history</h2><div id="videoHistory"><p>Completed videos will appear here automatically.</p></div>
+ </section>
+</main>
+<dialog id="videoConnectDialog"><h2>Connect Hugging Face</h2><p>Accept access to LTX 2.5 on the official model page, then create a read token with permission to download this model.</p><div class="actions"><button id="videoModelPage">Open official model page ↗</button><button id="videoTokenPage">Create a read token ↗</button></div><label for="videoToken">Hugging Face read token</label><input id="videoToken" type="password" autocomplete="off" spellcheck="false" placeholder="hf_…"><p class="hint">Saved encrypted for your Windows account. The token is used only to download the official model files.</p><div class="actions"><button id="videoTokenSave">Save connection</button><button id="videoDisconnect">Remove saved token</button><button id="videoConnectClose">Close</button></div><p id="videoConnectionMessage" role="status"></p></dialog>

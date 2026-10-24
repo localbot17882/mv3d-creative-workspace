@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "nodeCount": 1222,
+  "speech": true,
+  "imageStudio": true,
+  "audio": true,
+  "queueEmpty": true,
+  "cpuOnly": true,
+  "modelWeightsCopied": false,
+  "gpuGenerationTested": false
+}

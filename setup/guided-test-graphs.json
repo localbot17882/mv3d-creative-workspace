@@ -1,0 +1,2051 @@
+{
+  "layout-test": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "2": {
+      "class_type": "LTXICLoRALoaderModelOnly",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "lora_name": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+        "strength_model": 1
+      }
+    },
+    "3": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "type": "ltxv",
+        "device": "default"
+      }
+    },
+    "4": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "ltx-2.5-video-vae-conv-bf16.safetensors"
+      }
+    },
+    "5": {
+      "class_type": "ComfyLabLoadClip",
+      "inputs": {
+        "file": "comfy-lab-clip-test.mp4",
+        "width": 512,
+        "height": 320,
+        "duration": 2,
+        "fps": 24,
+        "preserve_audio": true
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "Sharp architectural detail."
+      }
+    },
+    "7": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "blurry, soft focus, low resolution, painting, watermark, warped geometry"
+      }
+    },
+    "8": {
+      "class_type": "LTXVConditioning",
+      "inputs": {
+        "positive": [
+          "6",
+          0
+        ],
+        "negative": [
+          "7",
+          0
+        ],
+        "frame_rate": 24
+      }
+    },
+    "9": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "comfy-lab-test.png"
+      }
+    },
+    "10": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler_ancestral"
+      }
+    },
+    "11": {
+      "class_type": "EmptyLTXVLatentVideo",
+      "inputs": {
+        "width": 256,
+        "height": 160,
+        "length": [
+          "5",
+          1
+        ],
+        "batch_size": 1
+      }
+    },
+    "12": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "8",
+          0
+        ],
+        "negative": [
+          "8",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "11",
+          0
+        ],
+        "image": [
+          "5",
+          0
+        ],
+        "frame_idx": 0,
+        "strength": 1,
+        "latent_downscale_factor": [
+          "2",
+          1
+        ],
+        "crop": "disabled",
+        "use_tiled_encode": true,
+        "tile_size": 256,
+        "tile_overlap": 64,
+        "use_streaming": false,
+        "tile_frames": 49
+      }
+    },
+    "13": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "12",
+          0
+        ],
+        "negative": [
+          "12",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "12",
+          2
+        ],
+        "image": [
+          "9",
+          0
+        ],
+        "frame_idx": -1,
+        "strength": 1,
+        "latent_downscale_factor": 1,
+        "crop": "disabled",
+        "use_tiled_encode": true,
+        "tile_size": 256,
+        "tile_overlap": 64
+      }
+    },
+    "14": {
+      "class_type": "CFGGuider",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "13",
+          0
+        ],
+        "negative": [
+          "13",
+          1
+        ],
+        "cfg": 1
+      }
+    },
+    "15": {
+      "class_type": "RandomNoise",
+      "inputs": {
+        "noise_seed": 42
+      }
+    },
+    "16": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "1.0, 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+      }
+    },
+    "17": {
+      "class_type": "SamplerCustomAdvanced",
+      "inputs": {
+        "noise": [
+          "15",
+          0
+        ],
+        "guider": [
+          "14",
+          0
+        ],
+        "sampler": [
+          "10",
+          0
+        ],
+        "sigmas": [
+          "16",
+          0
+        ],
+        "latent_image": [
+          "13",
+          2
+        ]
+      }
+    },
+    "18": {
+      "class_type": "LTXVCropGuides",
+      "inputs": {
+        "positive": [
+          "13",
+          0
+        ],
+        "negative": [
+          "13",
+          1
+        ],
+        "latent": [
+          "17",
+          0
+        ]
+      }
+    },
+    "19": {
+      "class_type": "LatentUpscaleModelLoader",
+      "inputs": {
+        "model_name": "ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+      }
+    },
+    "20": {
+      "class_type": "LTXVLatentUpsampler",
+      "inputs": {
+        "samples": [
+          "18",
+          2
+        ],
+        "upscale_model": [
+          "19",
+          0
+        ],
+        "vae": [
+          "4",
+          0
+        ]
+      }
+    },
+    "21": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "8",
+          0
+        ],
+        "negative": [
+          "8",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "20",
+          0
+        ],
+        "image": [
+          "5",
+          0
+        ],
+        "frame_idx": 0,
+        "strength": 1,
+        "latent_downscale_factor": [
+          "2",
+          1
+        ],
+        "crop": "disabled",
+        "use_tiled_encode": true,
+        "tile_size": 256,
+        "tile_overlap": 64,
+        "use_streaming": false,
+        "tile_frames": 49
+      }
+    },
+    "22": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "21",
+          0
+        ],
+        "negative": [
+          "21",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "21",
+          2
+        ],
+        "image": [
+          "9",
+          0
+        ],
+        "frame_idx": -1,
+        "strength": 1,
+        "latent_downscale_factor": 1,
+        "crop": "disabled",
+        "use_tiled_encode": true,
+        "tile_size": 256,
+        "tile_overlap": 64
+      }
+    },
+    "23": {
+      "class_type": "CFGGuider",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "22",
+          0
+        ],
+        "negative": [
+          "22",
+          1
+        ],
+        "cfg": 1
+      }
+    },
+    "24": {
+      "class_type": "RandomNoise",
+      "inputs": {
+        "noise_seed": 43
+      }
+    },
+    "25": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "0.85, 0.7250, 0.4219, 0.0"
+      }
+    },
+    "26": {
+      "class_type": "SamplerCustomAdvanced",
+      "inputs": {
+        "noise": [
+          "24",
+          0
+        ],
+        "guider": [
+          "23",
+          0
+        ],
+        "sampler": [
+          "10",
+          0
+        ],
+        "sigmas": [
+          "25",
+          0
+        ],
+        "latent_image": [
+          "22",
+          2
+        ]
+      }
+    },
+    "27": {
+      "class_type": "LTXVCropGuides",
+      "inputs": {
+        "positive": [
+          "22",
+          0
+        ],
+        "negative": [
+          "22",
+          1
+        ],
+        "latent": [
+          "26",
+          0
+        ]
+      }
+    },
+    "28": {
+      "class_type": "VAEDecodeTiled",
+      "inputs": {
+        "samples": [
+          "27",
+          2
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "tile_size": 512,
+        "overlap": 64,
+        "temporal_size": 32,
+        "temporal_overlap": 8
+      }
+    },
+    "29": {
+      "class_type": "CreateVideo",
+      "inputs": {
+        "images": [
+          "28",
+          0
+        ],
+        "fps": 24,
+        "audio": [
+          "5",
+          2
+        ],
+        "bit_depth": 8,
+        "color_space": "sRGB",
+        "codec": "none"
+      }
+    },
+    "30": {
+      "class_type": "SaveVideo",
+      "inputs": {
+        "video": [
+          "29",
+          0
+        ],
+        "filename_prefix": "Comfy Lab/3D Blocking/ltx25",
+        "format": "mp4",
+        "format.codec": "h264",
+        "format.codec.encoding": "re-encode",
+        "format.codec.encoding.crf": 18
+      }
+    }
+  },
+  "layout-hd": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "2": {
+      "class_type": "LTXICLoRALoaderModelOnly",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "lora_name": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+        "strength_model": 1
+      }
+    },
+    "3": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "type": "ltxv",
+        "device": "default"
+      }
+    },
+    "4": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "ltx-2.5-video-vae-conv-bf16.safetensors"
+      }
+    },
+    "5": {
+      "class_type": "ComfyLabLoadClip",
+      "inputs": {
+        "file": "comfy-lab-clip-test.mp4",
+        "width": 1024,
+        "height": 576,
+        "duration": 2,
+        "fps": 24,
+        "preserve_audio": true
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "Sharp architectural detail."
+      }
+    },
+    "7": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "blurry, soft focus, low resolution, painting, watermark, warped geometry"
+      }
+    },
+    "8": {
+      "class_type": "LTXVConditioning",
+      "inputs": {
+        "positive": [
+          "6",
+          0
+        ],
+        "negative": [
+          "7",
+          0
+        ],
+        "frame_rate": 24
+      }
+    },
+    "9": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "comfy-lab-test.png"
+      }
+    },
+    "10": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler_ancestral"
+      }
+    },
+    "11": {
+      "class_type": "EmptyLTXVLatentVideo",
+      "inputs": {
+        "width": 512,
+        "height": 288,
+        "length": [
+          "5",
+          1
+        ],
+        "batch_size": 1
+      }
+    },
+    "12": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "8",
+          0
+        ],
+        "negative": [
+          "8",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "11",
+          0
+        ],
+        "image": [
+          "5",
+          0
+        ],
+        "frame_idx": 0,
+        "strength": 1,
+        "latent_downscale_factor": [
+          "2",
+          1
+        ],
+        "crop": "disabled",
+        "use_tiled_encode": true,
+        "tile_size": 256,
+        "tile_overlap": 64,
+        "use_streaming": false,
+        "tile_frames": 49
+      }
+    },
+    "13": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "12",
+          0
+        ],
+        "negative": [
+          "12",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "12",
+          2
+        ],
+        "image": [
+          "9",
+          0
+        ],
+        "frame_idx": -1,
+        "strength": 1,
+        "latent_downscale_factor": 1,
+        "crop": "disabled",
+        "use_tiled_encode": true,
+        "tile_size": 256,
+        "tile_overlap": 64
+      }
+    },
+    "14": {
+      "class_type": "CFGGuider",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "13",
+          0
+        ],
+        "negative": [
+          "13",
+          1
+        ],
+        "cfg": 1
+      }
+    },
+    "15": {
+      "class_type": "RandomNoise",
+      "inputs": {
+        "noise_seed": 42
+      }
+    },
+    "16": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "1.0, 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+      }
+    },
+    "17": {
+      "class_type": "SamplerCustomAdvanced",
+      "inputs": {
+        "noise": [
+          "15",
+          0
+        ],
+        "guider": [
+          "14",
+          0
+        ],
+        "sampler": [
+          "10",
+          0
+        ],
+        "sigmas": [
+          "16",
+          0
+        ],
+        "latent_image": [
+          "13",
+          2
+        ]
+      }
+    },
+    "18": {
+      "class_type": "LTXVCropGuides",
+      "inputs": {
+        "positive": [
+          "13",
+          0
+        ],
+        "negative": [
+          "13",
+          1
+        ],
+        "latent": [
+          "17",
+          0
+        ]
+      }
+    },
+    "19": {
+      "class_type": "LatentUpscaleModelLoader",
+      "inputs": {
+        "model_name": "ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+      }
+    },
+    "20": {
+      "class_type": "LTXVLatentUpsampler",
+      "inputs": {
+        "samples": [
+          "18",
+          2
+        ],
+        "upscale_model": [
+          "19",
+          0
+        ],
+        "vae": [
+          "4",
+          0
+        ]
+      }
+    },
+    "21": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "8",
+          0
+        ],
+        "negative": [
+          "8",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "20",
+          0
+        ],
+        "image": [
+          "5",
+          0
+        ],
+        "frame_idx": 0,
+        "strength": 1,
+        "latent_downscale_factor": [
+          "2",
+          1
+        ],
+        "crop": "disabled",
+        "use_tiled_encode": true,
+        "tile_size": 256,
+        "tile_overlap": 64,
+        "use_streaming": false,
+        "tile_frames": 49
+      }
+    },
+    "22": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "21",
+          0
+        ],
+        "negative": [
+          "21",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "21",
+          2
+        ],
+        "image": [
+          "9",
+          0
+        ],
+        "frame_idx": -1,
+        "strength": 1,
+        "latent_downscale_factor": 1,
+        "crop": "disabled",
+        "use_tiled_encode": true,
+        "tile_size": 256,
+        "tile_overlap": 64
+      }
+    },
+    "23": {
+      "class_type": "CFGGuider",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "22",
+          0
+        ],
+        "negative": [
+          "22",
+          1
+        ],
+        "cfg": 1
+      }
+    },
+    "24": {
+      "class_type": "RandomNoise",
+      "inputs": {
+        "noise_seed": 43
+      }
+    },
+    "25": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "0.85, 0.7250, 0.4219, 0.0"
+      }
+    },
+    "26": {
+      "class_type": "SamplerCustomAdvanced",
+      "inputs": {
+        "noise": [
+          "24",
+          0
+        ],
+        "guider": [
+          "23",
+          0
+        ],
+        "sampler": [
+          "10",
+          0
+        ],
+        "sigmas": [
+          "25",
+          0
+        ],
+        "latent_image": [
+          "22",
+          2
+        ]
+      }
+    },
+    "27": {
+      "class_type": "LTXVCropGuides",
+      "inputs": {
+        "positive": [
+          "22",
+          0
+        ],
+        "negative": [
+          "22",
+          1
+        ],
+        "latent": [
+          "26",
+          0
+        ]
+      }
+    },
+    "28": {
+      "class_type": "VAEDecodeTiled",
+      "inputs": {
+        "samples": [
+          "27",
+          2
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "tile_size": 512,
+        "overlap": 64,
+        "temporal_size": 32,
+        "temporal_overlap": 8
+      }
+    },
+    "29": {
+      "class_type": "CreateVideo",
+      "inputs": {
+        "images": [
+          "28",
+          0
+        ],
+        "fps": 24,
+        "audio": [
+          "5",
+          2
+        ],
+        "bit_depth": 8,
+        "color_space": "sRGB",
+        "codec": "none"
+      }
+    },
+    "30": {
+      "class_type": "SaveVideo",
+      "inputs": {
+        "video": [
+          "29",
+          0
+        ],
+        "filename_prefix": "Comfy Lab/3D Blocking/ltx25",
+        "format": "mp4",
+        "format.codec": "h264",
+        "format.codec.encoding": "re-encode",
+        "format.codec.encoding.crf": 18
+      }
+    }
+  },
+  "layout-full": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "2": {
+      "class_type": "LTXICLoRALoaderModelOnly",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "lora_name": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+        "strength_model": 1
+      }
+    },
+    "3": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "type": "ltxv",
+        "device": "default"
+      }
+    },
+    "4": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "ltx-2.5-video-vae-conv-bf16.safetensors"
+      }
+    },
+    "5": {
+      "class_type": "ComfyLabLoadClip",
+      "inputs": {
+        "file": "comfy-lab-clip-test.mp4",
+        "width": 1920,
+        "height": 1088,
+        "duration": 2,
+        "fps": 24,
+        "preserve_audio": true
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "Sharp architectural detail."
+      }
+    },
+    "7": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "blurry, soft focus, low resolution, painting, watermark, warped geometry"
+      }
+    },
+    "8": {
+      "class_type": "LTXVConditioning",
+      "inputs": {
+        "positive": [
+          "6",
+          0
+        ],
+        "negative": [
+          "7",
+          0
+        ],
+        "frame_rate": 24
+      }
+    },
+    "9": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "comfy-lab-test.png"
+      }
+    },
+    "10": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler_ancestral"
+      }
+    },
+    "11": {
+      "class_type": "EmptyLTXVLatentVideo",
+      "inputs": {
+        "width": 960,
+        "height": 544,
+        "length": [
+          "5",
+          1
+        ],
+        "batch_size": 1
+      }
+    },
+    "12": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "8",
+          0
+        ],
+        "negative": [
+          "8",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "11",
+          0
+        ],
+        "image": [
+          "5",
+          0
+        ],
+        "frame_idx": 0,
+        "strength": 1,
+        "latent_downscale_factor": [
+          "2",
+          1
+        ],
+        "crop": "disabled",
+        "use_tiled_encode": true,
+        "tile_size": 256,
+        "tile_overlap": 64,
+        "use_streaming": false,
+        "tile_frames": 49
+      }
+    },
+    "13": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "12",
+          0
+        ],
+        "negative": [
+          "12",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "12",
+          2
+        ],
+        "image": [
+          "9",
+          0
+        ],
+        "frame_idx": -1,
+        "strength": 1,
+        "latent_downscale_factor": 1,
+        "crop": "disabled",
+        "use_tiled_encode": true,
+        "tile_size": 256,
+        "tile_overlap": 64
+      }
+    },
+    "14": {
+      "class_type": "CFGGuider",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "13",
+          0
+        ],
+        "negative": [
+          "13",
+          1
+        ],
+        "cfg": 1
+      }
+    },
+    "15": {
+      "class_type": "RandomNoise",
+      "inputs": {
+        "noise_seed": 42
+      }
+    },
+    "16": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "1.0, 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+      }
+    },
+    "17": {
+      "class_type": "SamplerCustomAdvanced",
+      "inputs": {
+        "noise": [
+          "15",
+          0
+        ],
+        "guider": [
+          "14",
+          0
+        ],
+        "sampler": [
+          "10",
+          0
+        ],
+        "sigmas": [
+          "16",
+          0
+        ],
+        "latent_image": [
+          "13",
+          2
+        ]
+      }
+    },
+    "18": {
+      "class_type": "LTXVCropGuides",
+      "inputs": {
+        "positive": [
+          "13",
+          0
+        ],
+        "negative": [
+          "13",
+          1
+        ],
+        "latent": [
+          "17",
+          0
+        ]
+      }
+    },
+    "19": {
+      "class_type": "LatentUpscaleModelLoader",
+      "inputs": {
+        "model_name": "ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+      }
+    },
+    "20": {
+      "class_type": "LTXVLatentUpsampler",
+      "inputs": {
+        "samples": [
+          "18",
+          2
+        ],
+        "upscale_model": [
+          "19",
+          0
+        ],
+        "vae": [
+          "4",
+          0
+        ]
+      }
+    },
+    "21": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "8",
+          0
+        ],
+        "negative": [
+          "8",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "20",
+          0
+        ],
+        "image": [
+          "5",
+          0
+        ],
+        "frame_idx": 0,
+        "strength": 1,
+        "latent_downscale_factor": [
+          "2",
+          1
+        ],
+        "crop": "disabled",
+        "use_tiled_encode": true,
+        "tile_size": 256,
+        "tile_overlap": 64,
+        "use_streaming": false,
+        "tile_frames": 49
+      }
+    },
+    "22": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "21",
+          0
+        ],
+        "negative": [
+          "21",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "21",
+          2
+        ],
+        "image": [
+          "9",
+          0
+        ],
+        "frame_idx": -1,
+        "strength": 1,
+        "latent_downscale_factor": 1,
+        "crop": "disabled",
+        "use_tiled_encode": true,
+        "tile_size": 256,
+        "tile_overlap": 64
+      }
+    },
+    "23": {
+      "class_type": "CFGGuider",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "22",
+          0
+        ],
+        "negative": [
+          "22",
+          1
+        ],
+        "cfg": 1
+      }
+    },
+    "24": {
+      "class_type": "RandomNoise",
+      "inputs": {
+        "noise_seed": 43
+      }
+    },
+    "25": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "0.85, 0.7250, 0.4219, 0.0"
+      }
+    },
+    "26": {
+      "class_type": "SamplerCustomAdvanced",
+      "inputs": {
+        "noise": [
+          "24",
+          0
+        ],
+        "guider": [
+          "23",
+          0
+        ],
+        "sampler": [
+          "10",
+          0
+        ],
+        "sigmas": [
+          "25",
+          0
+        ],
+        "latent_image": [
+          "22",
+          2
+        ]
+      }
+    },
+    "27": {
+      "class_type": "LTXVCropGuides",
+      "inputs": {
+        "positive": [
+          "22",
+          0
+        ],
+        "negative": [
+          "22",
+          1
+        ],
+        "latent": [
+          "26",
+          0
+        ]
+      }
+    },
+    "28": {
+      "class_type": "VAEDecodeTiled",
+      "inputs": {
+        "samples": [
+          "27",
+          2
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "tile_size": 512,
+        "overlap": 64,
+        "temporal_size": 32,
+        "temporal_overlap": 8
+      }
+    },
+    "29": {
+      "class_type": "CreateVideo",
+      "inputs": {
+        "images": [
+          "28",
+          0
+        ],
+        "fps": 24,
+        "audio": [
+          "5",
+          2
+        ],
+        "bit_depth": 8,
+        "color_space": "sRGB",
+        "codec": "none"
+      }
+    },
+    "30": {
+      "class_type": "SaveVideo",
+      "inputs": {
+        "video": [
+          "29",
+          0
+        ],
+        "filename_prefix": "Comfy Lab/3D Blocking/ltx25",
+        "format": "mp4",
+        "format.codec": "h264",
+        "format.codec.encoding": "re-encode",
+        "format.codec.encoding.crf": 18
+      }
+    }
+  },
+  "refine-test": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "2": {
+      "class_type": "LTXICLoRALoaderModelOnly",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "lora_name": "ltx-2.5-22b-ic-lora-refine-details-1.0.safetensors",
+        "strength_model": 1
+      }
+    },
+    "3": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "type": "ltxv",
+        "device": "default"
+      }
+    },
+    "4": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "ltx-2.5-video-vae-conv-bf16.safetensors"
+      }
+    },
+    "5": {
+      "class_type": "ComfyLabLoadClip",
+      "inputs": {
+        "file": "comfy-lab-clip-test.mp4",
+        "width": 512,
+        "height": 320,
+        "duration": 2,
+        "fps": 24,
+        "preserve_audio": true
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "Restore subtle natural fine detail while preserving the original subjects, identity, geometry, framing, colours, lighting, timing and motion. Do not add or remove objects, invent texture or introduce camera movement."
+      }
+    },
+    "7": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "blurry, soft focus, low resolution, painting, watermark, warped geometry"
+      }
+    },
+    "8": {
+      "class_type": "LTXVConditioning",
+      "inputs": {
+        "positive": [
+          "6",
+          0
+        ],
+        "negative": [
+          "7",
+          0
+        ],
+        "frame_rate": 24
+      }
+    },
+    "9": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler"
+      }
+    },
+    "10": {
+      "class_type": "EmptyLTXVLatentVideo",
+      "inputs": {
+        "width": 512,
+        "height": 320,
+        "length": [
+          "5",
+          1
+        ],
+        "batch_size": 1
+      }
+    },
+    "11": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "8",
+          0
+        ],
+        "negative": [
+          "8",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "10",
+          0
+        ],
+        "image": [
+          "5",
+          0
+        ],
+        "frame_idx": 0,
+        "strength": 1,
+        "latent_downscale_factor": 1,
+        "crop": "disabled",
+        "use_tiled_encode": false,
+        "tile_size": 256,
+        "tile_overlap": 64,
+        "use_streaming": true,
+        "tile_frames": 49
+      }
+    },
+    "12": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "1.0, 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+      }
+    },
+    "13": {
+      "class_type": "LTXVTiledFusionSampler",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "11",
+          0
+        ],
+        "negative": [
+          "11",
+          1
+        ],
+        "latents": [
+          "11",
+          2
+        ],
+        "sigmas": [
+          "12",
+          0
+        ],
+        "sampler": [
+          "9",
+          0
+        ],
+        "seed": 42,
+        "cfg": 1,
+        "tile_width": 1024,
+        "tile_height": 576,
+        "overlap_frac": 0.5,
+        "blend_var": 0.05,
+        "grid_cycle": 1,
+        "tile_frames": 49,
+        "vae": [
+          "4",
+          0
+        ],
+        "canvas_device": "cpu"
+      }
+    },
+    "14": {
+      "class_type": "VAEDecodeTiled",
+      "inputs": {
+        "samples": [
+          "13",
+          0
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "tile_size": 512,
+        "overlap": 64,
+        "temporal_size": 32,
+        "temporal_overlap": 8
+      }
+    },
+    "15": {
+      "class_type": "CreateVideo",
+      "inputs": {
+        "images": [
+          "14",
+          0
+        ],
+        "fps": 24,
+        "audio": [
+          "5",
+          2
+        ],
+        "bit_depth": 8,
+        "color_space": "sRGB",
+        "codec": "none"
+      }
+    },
+    "16": {
+      "class_type": "SaveVideo",
+      "inputs": {
+        "video": [
+          "15",
+          0
+        ],
+        "filename_prefix": "Comfy Lab/Refine Video/ltx25",
+        "format": "mp4",
+        "format.codec": "h264",
+        "format.codec.encoding": "re-encode",
+        "format.codec.encoding.crf": 18
+      }
+    }
+  },
+  "refine-hd": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "2": {
+      "class_type": "LTXICLoRALoaderModelOnly",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "lora_name": "ltx-2.5-22b-ic-lora-refine-details-1.0.safetensors",
+        "strength_model": 1
+      }
+    },
+    "3": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "type": "ltxv",
+        "device": "default"
+      }
+    },
+    "4": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "ltx-2.5-video-vae-conv-bf16.safetensors"
+      }
+    },
+    "5": {
+      "class_type": "ComfyLabLoadClip",
+      "inputs": {
+        "file": "comfy-lab-clip-test.mp4",
+        "width": 1024,
+        "height": 576,
+        "duration": 2,
+        "fps": 24,
+        "preserve_audio": true
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "Restore subtle natural fine detail while preserving the original subjects, identity, geometry, framing, colours, lighting, timing and motion. Do not add or remove objects, invent texture or introduce camera movement."
+      }
+    },
+    "7": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "blurry, soft focus, low resolution, painting, watermark, warped geometry"
+      }
+    },
+    "8": {
+      "class_type": "LTXVConditioning",
+      "inputs": {
+        "positive": [
+          "6",
+          0
+        ],
+        "negative": [
+          "7",
+          0
+        ],
+        "frame_rate": 24
+      }
+    },
+    "9": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler"
+      }
+    },
+    "10": {
+      "class_type": "EmptyLTXVLatentVideo",
+      "inputs": {
+        "width": 1024,
+        "height": 576,
+        "length": [
+          "5",
+          1
+        ],
+        "batch_size": 1
+      }
+    },
+    "11": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "8",
+          0
+        ],
+        "negative": [
+          "8",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "10",
+          0
+        ],
+        "image": [
+          "5",
+          0
+        ],
+        "frame_idx": 0,
+        "strength": 1,
+        "latent_downscale_factor": 1,
+        "crop": "disabled",
+        "use_tiled_encode": false,
+        "tile_size": 256,
+        "tile_overlap": 64,
+        "use_streaming": true,
+        "tile_frames": 49
+      }
+    },
+    "12": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "1.0, 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+      }
+    },
+    "13": {
+      "class_type": "LTXVTiledFusionSampler",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "11",
+          0
+        ],
+        "negative": [
+          "11",
+          1
+        ],
+        "latents": [
+          "11",
+          2
+        ],
+        "sigmas": [
+          "12",
+          0
+        ],
+        "sampler": [
+          "9",
+          0
+        ],
+        "seed": 42,
+        "cfg": 1,
+        "tile_width": 1024,
+        "tile_height": 576,
+        "overlap_frac": 0.5,
+        "blend_var": 0.05,
+        "grid_cycle": 1,
+        "tile_frames": 49,
+        "vae": [
+          "4",
+          0
+        ],
+        "canvas_device": "cpu"
+      }
+    },
+    "14": {
+      "class_type": "VAEDecodeTiled",
+      "inputs": {
+        "samples": [
+          "13",
+          0
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "tile_size": 512,
+        "overlap": 64,
+        "temporal_size": 32,
+        "temporal_overlap": 8
+      }
+    },
+    "15": {
+      "class_type": "CreateVideo",
+      "inputs": {
+        "images": [
+          "14",
+          0
+        ],
+        "fps": 24,
+        "audio": [
+          "5",
+          2
+        ],
+        "bit_depth": 8,
+        "color_space": "sRGB",
+        "codec": "none"
+      }
+    },
+    "16": {
+      "class_type": "SaveVideo",
+      "inputs": {
+        "video": [
+          "15",
+          0
+        ],
+        "filename_prefix": "Comfy Lab/Refine Video/ltx25",
+        "format": "mp4",
+        "format.codec": "h264",
+        "format.codec.encoding": "re-encode",
+        "format.codec.encoding.crf": 18
+      }
+    }
+  },
+  "refine-full": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "2": {
+      "class_type": "LTXICLoRALoaderModelOnly",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "lora_name": "ltx-2.5-22b-ic-lora-refine-details-1.0.safetensors",
+        "strength_model": 1
+      }
+    },
+    "3": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "type": "ltxv",
+        "device": "default"
+      }
+    },
+    "4": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "ltx-2.5-video-vae-conv-bf16.safetensors"
+      }
+    },
+    "5": {
+      "class_type": "ComfyLabLoadClip",
+      "inputs": {
+        "file": "comfy-lab-clip-test.mp4",
+        "width": 1920,
+        "height": 1088,
+        "duration": 2,
+        "fps": 24,
+        "preserve_audio": true
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "Restore subtle natural fine detail while preserving the original subjects, identity, geometry, framing, colours, lighting, timing and motion. Do not add or remove objects, invent texture or introduce camera movement."
+      }
+    },
+    "7": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "blurry, soft focus, low resolution, painting, watermark, warped geometry"
+      }
+    },
+    "8": {
+      "class_type": "LTXVConditioning",
+      "inputs": {
+        "positive": [
+          "6",
+          0
+        ],
+        "negative": [
+          "7",
+          0
+        ],
+        "frame_rate": 24
+      }
+    },
+    "9": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler"
+      }
+    },
+    "10": {
+      "class_type": "EmptyLTXVLatentVideo",
+      "inputs": {
+        "width": 1920,
+        "height": 1088,
+        "length": [
+          "5",
+          1
+        ],
+        "batch_size": 1
+      }
+    },
+    "11": {
+      "class_type": "LTXAddVideoICLoRAGuide",
+      "inputs": {
+        "positive": [
+          "8",
+          0
+        ],
+        "negative": [
+          "8",
+          1
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "latent": [
+          "10",
+          0
+        ],
+        "image": [
+          "5",
+          0
+        ],
+        "frame_idx": 0,
+        "strength": 1,
+        "latent_downscale_factor": 1,
+        "crop": "disabled",
+        "use_tiled_encode": false,
+        "tile_size": 256,
+        "tile_overlap": 64,
+        "use_streaming": true,
+        "tile_frames": 49
+      }
+    },
+    "12": {
+      "class_type": "ManualSigmas",
+      "inputs": {
+        "sigmas": "1.0, 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+      }
+    },
+    "13": {
+      "class_type": "LTXVTiledFusionSampler",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "positive": [
+          "11",
+          0
+        ],
+        "negative": [
+          "11",
+          1
+        ],
+        "latents": [
+          "11",
+          2
+        ],
+        "sigmas": [
+          "12",
+          0
+        ],
+        "sampler": [
+          "9",
+          0
+        ],
+        "seed": 42,
+        "cfg": 1,
+        "tile_width": 1024,
+        "tile_height": 576,
+        "overlap_frac": 0.5,
+        "blend_var": 0.05,
+        "grid_cycle": 1,
+        "tile_frames": 49,
+        "vae": [
+          "4",
+          0
+        ],
+        "canvas_device": "cpu"
+      }
+    },
+    "14": {
+      "class_type": "VAEDecodeTiled",
+      "inputs": {
+        "samples": [
+          "13",
+          0
+        ],
+        "vae": [
+          "4",
+          0
+        ],
+        "tile_size": 512,
+        "overlap": 64,
+        "temporal_size": 32,
+        "temporal_overlap": 8
+      }
+    },
+    "15": {
+      "class_type": "CreateVideo",
+      "inputs": {
+        "images": [
+          "14",
+          0
+        ],
+        "fps": 24,
+        "audio": [
+          "5",
+          2
+        ],
+        "bit_depth": 8,
+        "color_space": "sRGB",
+        "codec": "none"
+      }
+    },
+    "16": {
+      "class_type": "SaveVideo",
+      "inputs": {
+        "video": [
+          "15",
+          0
+        ],
+        "filename_prefix": "Comfy Lab/Refine Video/ltx25",
+        "format": "mp4",
+        "format.codec": "h264",
+        "format.codec.encoding": "re-encode",
+        "format.codec.encoding.crf": 18
+      }
+    }
+  }
+}

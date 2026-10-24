@@ -1,0 +1,32 @@
+[
+  {
+    "folder": "ComfyUI",
+    "url": "https://github.com/Comfy-Org/ComfyUI.git",
+    "commit": "c06bf5f569d268b80076e5f44126f87cdf835869"
+  },
+  {
+    "folder": "ComfyUI/custom_nodes/ComfyUI-Flux2Klein-Enhancer",
+    "url": "https://github.com/donpinkus/comfyui-flux2klein-enhancer.git",
+    "commit": "ce33bc8d5d1e5a00371357bccf4b51bd20550409"
+  },
+  {
+    "folder": "ComfyUI/custom_nodes/comfyui-impact-pack",
+    "url": "https://github.com/ltdrdata/ComfyUI-Impact-Pack.git",
+    "commit": "429d0159ad429e64d2b3916e6e7be9c22d025c3c"
+  },
+  {
+    "folder": "ComfyUI/custom_nodes/comfyui-impact-subpack",
+    "url": "https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git",
+    "commit": "50c7b71a6a224734cc9b21963c6d1926816a97f1"
+  },
+  {
+    "folder": "ComfyUI/custom_nodes/comfyui-klein-tiled-upscaler",
+    "url": "https://github.com/Gavr728/ComfyUI_KleinTiledUpscaler.git",
+    "commit": "e46c3b48ae9da02129ac60674fb44a0d5ac134e5"
+  },
+  {
+    "folder": "ComfyUI/custom_nodes/ComfyUI-TiledUpscale",
+    "url": "https://github.com/GianlucaMancuso/ComfyUI-TiledUpscale.git",
+    "commit": "fecdcb179c97dfe945b5bc1d5d3afc559737ad52"
+  }
+]

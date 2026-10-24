@@ -1,0 +1,21 @@
+<main id="audioApp" hidden>
+ <aside>
+  <button id="audioBack" class="secondary">← Image tools</button>
+  <h2>AUDIO <span class="videoLocal">LOCAL</span></h2><p class="hint">LTX 2.5 · Text to audio</p>
+  <label for="audioPreset">Starting point</label><select id="audioPreset"><option value="ambient">Architectural ambience</option><option value="nature">Nature</option><option value="effects">Sound effects</option><option value="speech">Speech</option><option value="custom">Custom</option></select>
+  <label for="audioPrompt">Describe the audio</label><textarea id="audioPrompt" maxlength="4000" rows="7">A calm outdoor architectural ambience. Gentle wind moves through trees, distant birds sing, and soft footsteps pass on a stone path. Natural stereo sound, no music, no speech.</textarea>
+  <div class="row"><label for="audioDuration">Duration</label><select id="audioDuration"><option value="2">2 seconds · test</option><option value="4" selected>4 seconds</option><option value="6">6 seconds</option><option value="8">8 seconds</option><option value="10">10 seconds</option><option value="20">20 seconds · demanding</option><option value="30">30 seconds · demanding</option></select></div>
+  <small>Duration is approximate. Output: WAV · 16-bit PCM. Audio is generated without an image or video.</small>
+  <details><summary>Advanced options</summary><div class="row"><label for="audioSeed">Seed</label><input id="audioSeed" type="number" min="0" max="4294967295" value="42"></div><button id="audioSeedLock" aria-pressed="true">Seed locked</button><button id="audioRandom" class="secondary">Random seed</button><label for="audioTextDevice">Text processing</label><select id="audioTextDevice"><option value="auto">Automatic · faster</option><option value="cpu">Low GPU use · much slower</option></select><label for="audioNegative">Avoid</label><textarea id="audioNegative" rows="2" maxlength="2000">distortion, clipping, crackling, low quality</textarea><small>Distilled model · fixed 8-step schedule.</small></details>
+  <p id="audioRisk" class="videoRisk" role="status"></p>
+  <button id="audioGenerate" class="primary" disabled>Generate audio ↗</button><button id="audioCancel" class="secondary" hidden>Cancel operation</button>
+  <details id="audioSetup" open><summary>Local engine and models</summary><p id="audioReadiness" class="hint">Checking local installation…</p><button id="audioStart" class="secondary">Start ComfyUI</button><button id="audioRestart" class="secondary">Restart ComfyUI</button><button id="audioConnect" class="secondary">Connect Hugging Face</button><button id="audioInstall" class="secondary">Install shared audio models</button><small>Uses the LTX transformer, Gemma text encoder and audio VAE · about 37.2 GB total. Existing video files are reused.</small></details>
+ </aside>
+ <section class="workspace videoWorkspace">
+  <p class="eyebrow">COMFY LAB / SOUND STUDIO</p><h1>Give your scene a sound.</h1>
+  <div class="audioStage"><span aria-hidden="true">♪</span><h2 id="audioTitle">Describe it. Listen to it.</h2><p>Ambience, effects or speech from your prompt.</p><audio id="audioPlayer" controls preload="metadata" hidden></audio><p id="audioEmpty">Generated audio will appear here.</p></div>
+  <div class="actions"><button id="audioSave" disabled>Save WAV</button><button id="audioExport" disabled>Export workflow</button></div>
+  <p id="audioMessage" role="status">Start with a short test. Speech and prompt accuracy can vary.</p><progress id="audioProgress" max="100" hidden></progress>
+  <div class="videoHeading"><h2>Audio history</h2><button id="audioHistoryRefresh">Refresh history</button></div><div id="audioHistory">Completed audio will appear here automatically.</div>
+ </section>
+</main>

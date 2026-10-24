@@ -1,0 +1,5 @@
+Audio-only nodes from https://github.com/Lightricks/ComfyUI-LTXVideo
+Pinned upstream commit: see revision.txt.
+audio_only.py and nodes_registry.py are unmodified upstream files.
+Only these two audio nodes are registered here; this is not the complete LTXVideo package.
+The upstream license is included in LICENSE.

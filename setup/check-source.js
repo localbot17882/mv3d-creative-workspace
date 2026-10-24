@@ -1,0 +1,1 @@
+const {spawnSync}=require('node:child_process');const path=require('node:path');for(const test of ['test-image-studio','test-photo-aspect','test-audio','test-canvas-assistant','test-storyboard-transfer']){const r=spawnSync(process.execPath,[path.join(__dirname,test+'.js')],{stdio:'inherit'});if(r.status!==0)process.exit(r.status||1);}

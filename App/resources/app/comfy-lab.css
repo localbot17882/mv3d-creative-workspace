@@ -1,0 +1,20 @@
+:root{color-scheme:light;--ink:#19353d;--teal:#006a70;--orange:#e76837;--line:#d5ddd7}
+body{font-family:'Segoe UI Variable Text','Segoe UI',sans-serif;font-size:13px;background:#f2f0e9;color:var(--ink)}
+header{height:86px;background:#fbfaf5;border-bottom:1px solid var(--line);padding:0 28px;box-shadow:0 3px 16px #163d3610}
+.brand{font-family:Bahnschrift,'Arial Narrow',sans-serif;letter-spacing:-.8px;font-size:28px;font-weight:650;gap:12px;white-space:nowrap}
+.brand b{font-family:Bahnschrift,sans-serif;color:var(--teal);font-size:15px;letter-spacing:2px;margin-left:4px;font-weight:400}
+.logo{position:relative;width:42px;height:42px;border-radius:12px 12px 12px 3px;background:var(--teal);font-family:Bahnschrift,sans-serif;color:white;font-size:31px;font-weight:600}
+.logo span{position:absolute;right:3px;top:0;color:#ffb183;font-size:18px;font-weight:400}
+main{grid-template-columns:345px 1fr;height:calc(100vh - 86px)}
+main>aside{background:#fbfaf5;padding:24px;border-color:var(--line)}
+.eyebrow{font-family:Bahnschrift,sans-serif;color:#627779;font-size:10px;letter-spacing:2.4px}
+h1,h2{font-family:Bahnschrift,'Segoe UI',sans-serif}h1{font-size:30px;letter-spacing:-1px;font-weight:500;line-height:1.2}
+button{border-radius:8px;transition:background .15s,border-color .15s,box-shadow .15s}button:hover{border-color:#7ca4a0;box-shadow:0 2px 8px #244a4410}button:disabled{box-shadow:none}
+.taskTabs{gap:5px;background:#e8eeea;padding:5px;border-radius:11px}.taskTabs button{background:transparent;border-color:transparent;font-family:Bahnschrift,sans-serif;font-size:12px}.taskTabs [aria-selected=true]{background:var(--teal);color:white;box-shadow:0 2px 6px #005a6130}
+.upload{background:#f0f5ef;border-color:#97b7aa;border-radius:12px;padding:22px 8px}.upload:hover{background:#e6f0e8;border-color:var(--teal)}.plus{color:var(--orange);font-size:31px}.upload strong{font-family:Bahnschrift,sans-serif;font-size:15px;font-weight:500}
+.primary{background:var(--teal);color:white;border:0;font-family:Bahnschrift,sans-serif;font-size:14px;padding:16px;border-radius:10px}.primary:hover{background:#00565b}.primary span{color:#ffb183;font-size:20px}
+.workspace{padding:28px 30px 20px;background:#f2f0e9}.canvas{background:radial-gradient(ellipse at 50% 40%,#f9faf5 0,#e6ebe5 75%);border:1px solid #cbd5cf;border-radius:17px;box-shadow:inset 0 0 50px #254c3b05}
+#empty .outline{font-size:65px;color:var(--teal);line-height:1}#empty h2{color:var(--ink);font-size:27px;font-weight:500;letter-spacing:-.8px}#empty p{color:#617778}#empty>span{color:#7b8c85;letter-spacing:3px}
+.slider output{font-family:Bahnschrift,sans-serif;color:var(--teal)}input[type=range]{accent-color:var(--teal)}input[type=checkbox]{accent-color:var(--teal)}textarea{background:#fffefb;border-color:#cbd5cf}.models{background:#eef3ed;border:1px solid #d2ded2;border-radius:10px}.models .secondary{background:#fbfaf5}.connection{color:var(--teal);background:#eaf3ec;border-color:#bfd4c8}
+.badge{color:white;background:#153b40dd}.statusline{color:#33575b}#statusDot{color:var(--orange)}footer{border-color:var(--line)}#divider span,#hDivider span,#pDivider span{background:var(--teal);border-color:white;color:white}
+dialog{background:#fbfaf5;color:var(--ink);border:1px solid #becdc4;border-radius:16px}dialog::backdrop{background:#12302e66}#nanoDialog{max-width:650px;padding:28px}#nanoDialog label{display:block;margin:18px 0 8px}.historyCard{background:#fffefb}.postLayout input[type=text],#hfKey{background:white;color:var(--ink)}

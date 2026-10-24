@@ -1,0 +1,5 @@
+.postColourGroup{padding:12px 0;border-top:1px solid #bfb7c5}
+.postColourGroup summary{font-weight:700;cursor:pointer;margin-bottom:12px}
+.postColourGroup .slider{margin:12px 0}
+.postColourGroup output{font-variant-numeric:tabular-nums}
+#postCurveCanvas{width:100%;height:auto;touch-action:none;border-radius:8px;background:#211927;cursor:crosshair}

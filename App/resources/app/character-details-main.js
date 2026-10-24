@@ -1,0 +1,36 @@
+'use strict';
+const fs=require('node:fs/promises'),crypto=require('node:crypto'),readImage=require('./image-input'),{buildCharacter,checkedCharacter}=require('./character-workflow'),{watchProgress}=require('./job-progress');
+const views=[{role:'front',label:'Front close-up',prompt:'A high-resolution front-facing head-and-shoulders photograph of exactly the same adult person. The face fills most of the image. Keep the same facial structure, eyes, nose, lips, eyebrows, skin tone, age, hairstyle and hair colour. Neutral expression, natural skin pores, no makeup changes, no retouching, sharp eyes, soft neutral studio daylight, plain grey background.'},{role:'three-quarter',label:'Three-quarter close-up',prompt:'A high-resolution three-quarter head-and-shoulders photograph of exactly the same adult person, turned slightly to the left. Keep the same facial structure, eyes, nose, lips, eyebrows, skin tone, age, hairstyle and hair colour. Neutral expression, natural skin texture, sharp eyes, no beautification or makeup changes. Soft neutral studio daylight, plain grey background.'}];
+module.exports=function({ipcMain,archive,nativeImage,dialog,getWindow,api,status,isBusy,reserve,emit}){
+ let active=null;
+ async function character(id){const c=(await archive.list()).find(c=>c.id===id);if(!c)throw Error('Choose a saved character from your library.');return c;}
+ async function publicDetails(id){await character(id);const d=await archive.details(id);return {character:id,images:await Promise.all(d.images.map(async e=>{const {path,...meta}=e,im=nativeImage.createFromBuffer(await fs.readFile(path));return {...meta,thumbnail:im.resize({width:240}).toDataURL()};})),busy:!!active};}
+ async function generate(c,dimensions){
+  reserve(true);active={character:c.id,index:0,total:views.length,stage:'Preparing reference photos'};
+  emit({type:'operationStart',message:'Creating character full details'});
+  try{
+   const image=await readImage(c.file,nativeImage),form=new FormData();form.append('image',new Blob([image.bytes]),'comfy-lab-identity-'+crypto.randomUUID()+'.png');const up=await api('/upload/image',{method:'POST',body:form}),reference=up.subfolder?up.subfolder+'/'+up.name:up.name;
+   for(const [index,view] of views.entries()){
+    active.index=index;active.stage=view.label;
+    const workflow=buildCharacter({mode:'reference',width:dimensions.width,height:dimensions.height,steps:4,seed:((Date.now()%4294967296)+index)%4294967296,name:c.name,prompt:view.prompt},reference),client=crypto.randomUUID();
+    const queued=await api('/prompt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:workflow.graph,client_id:client})});if(!queued.prompt_id)throw Error('ComfyUI did not accept the detail photograph.');
+    const tracker=watchProgress(client,queued.prompt_id,workflow.graph,e=>emit({...e,type:'progress',percent:(index+(e.percent||0)/100)/views.length*100,stage:view.label+' · '+(e.stage||'Generating'),message:'Creating full details',etaSeconds:Number.isFinite(e.etaSeconds)?e.etaSeconds*(views.length-index):null}),{task:'characters'});
+    try{
+     const deadline=Date.now()+20*60000;let completed=false;
+     while(Date.now()<deadline){await new Promise(r=>setTimeout(r,1200));const history=(await api('/history/'+queued.prompt_id))[queued.prompt_id];if(!history)continue;if(history.status?.status_str==='error'){const err=history.status.messages?.find(e=>e[0]==='execution_error')?.[1];throw Error(err?.exception_message||'Detail generation failed.');}const output=history.outputs?.['18']?.images?.[0];if(!output)continue;
+      const response=await fetch('http://127.0.0.1:8188/view?'+new URLSearchParams(output),{signal:AbortSignal.timeout(30000)});if(!response.ok)throw Error('Could not read the detail photograph.');const bytes=Buffer.from(await response.arrayBuffer()),im=nativeImage.createFromBuffer(bytes);if(im.isEmpty())throw Error('The detail photograph is invalid.');await archive.saveDetail(c.id,im.toPNG(),{...view,origin:'generated'});completed=true;emit({type:'detailsUpdated',character:c.id,message:view.label+' saved for review.'});break;
+     }
+     if(!completed)throw Error('The detail photograph timed out. Any completed photos have been kept.');
+    }finally{tracker.close();}
+   }
+   emit({type:'operationDone',message:'Full details ready. Review the photos and enable the ones that match your character.'});emit({type:'detailsDone',character:c.id,message:'Full details saved. Review and approve the matching identity photos before using them in Compose scene.'});
+  }catch(e){emit({type:'operationError',message:e.message});emit({type:'detailsError',character:c.id,message:e.message});}finally{active=null;reserve(false);}
+ }
+ ipcMain.handle('characters-details-status',()=>active?{...active,busy:true}:{busy:false});
+ ipcMain.handle('characters-details-get',(_,id)=>publicDetails(id));
+ ipcMain.handle('characters-details-image',async(_,raw)=>{await character(raw.character);const e=(await archive.details(raw.character)).images.find(e=>e.id===raw.image);if(!e)throw Error('This detail photo is unavailable.');return nativeImage.createFromBuffer(await fs.readFile(e.path)).toDataURL();});
+ ipcMain.handle('characters-details-approve',async(_,raw)=>{if(isBusy()||active)throw Error('Wait for the current generation.');await character(raw.character);return archive.approveDetail(raw.character,raw.image,raw.approved);});
+ ipcMain.handle('characters-details-import',async(_,id)=>{if(isBusy()||active)throw Error('Wait for the current generation.');await character(id);const chosen=await dialog.showOpenDialog(getWindow(),{title:'Add photos of the same character',properties:['openFile','multiSelections'],filters:[{name:'Images',extensions:['png','jpg','jpeg','webp']}]});if(chosen.canceled)return publicDetails(id);if((await archive.details(id)).images.length+chosen.filePaths.length>12)throw Error('Use up to twelve detail photos per character.');for(const file of chosen.filePaths){const image=await readImage(file,nativeImage);await archive.saveDetail(id,nativeImage.createFromBuffer(image.bytes).toPNG(),{label:require('node:path').basename(file),role:'reference',origin:'imported'});}return publicDetails(id);});
+ ipcMain.handle('characters-details-generate',async(_,raw)=>{const id=typeof raw==='string'?raw:raw.id;const dimensions=checkedCharacter({mode:'reference',width:typeof raw==='object'?(raw.width??1024):1024,height:typeof raw==='object'?(raw.height??1024):1024,prompt:'Character identity details'});if(dimensions.width*dimensions.height>1600000)throw Error('Use detail photos up to 1.6 megapixels.');if(isBusy()||active)throw Error('Wait for the current generation.');const c=await character(id),st=await status();if(!st.connected||!st.engines.klein?.ready)throw Error('Start ComfyUI with the Klein 4B reference model ready.');if((await archive.details(id)).images.length+views.length>12)throw Error('Use up to twelve detail photos per character.');const queue=await api('/queue');if(queue.queue_running?.length||queue.queue_pending?.length)throw Error('Wait for the ComfyUI queue to finish.');void generate(c,dimensions);return {started:true,character:id,total:views.length};});
+ return {busy:()=>!!active};
+};

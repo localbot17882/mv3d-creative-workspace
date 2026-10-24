@@ -1,0 +1,28 @@
+[
+  {
+    "name": "z_image_turbo_bf16.safetensors",
+    "file": "z_image_turbo_bf16.safetensors",
+    "dir": "diffusion_models",
+    "repo": "Comfy-Org/z_image_turbo",
+    "rev": "6fc90a3b1b653e935a0d175e260736de25b84df5",
+    "remote": "split_files/diffusion_models/z_image_turbo_bf16.safetensors",
+    "size": 12309866400,
+    "sha": "2407613050b809ffdff18a4ac99af83ea6b95443ecebdf80e064a79c825574a6",
+    "modes": [
+      "characters"
+    ]
+  },
+  {
+    "name": "ae.safetensors",
+    "file": "ae.safetensors",
+    "dir": "vae",
+    "repo": "Comfy-Org/z_image_turbo",
+    "rev": "6fc90a3b1b653e935a0d175e260736de25b84df5",
+    "remote": "split_files/vae/ae.safetensors",
+    "size": 335304388,
+    "sha": "afc8e28272cd15db3919bacdb6918ce9c1ed22e96cb12c4d5ed0fba823529e38",
+    "modes": [
+      "characters"
+    ]
+  }
+]

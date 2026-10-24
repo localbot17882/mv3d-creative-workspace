@@ -1,0 +1,26 @@
+[
+  {
+    "optional": true,
+    "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+    "rev": "349625f9bad639dc41f1c70d2c63f75a02a09c59",
+    "remote": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+    "repo": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
+    "name": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+    "size": 1308787439,
+    "dir": "loras",
+    "sha": "77567d81d71b4df558d622dffc0ec218ba1e22c69b2932f6fa12f34772697eae",
+    "mode": "layout"
+  },
+  {
+    "optional": true,
+    "file": "ltx-2.5-22b-ic-lora-refine-details-1.0.safetensors",
+    "rev": "4912c478b35dd96b6cdcc5f7c7ff9d72c2c57929",
+    "remote": "ltx-2.5-22b-ic-lora-refine-details-1.0.safetensors",
+    "repo": "Lightricks/LTX-2.5-22b-IC-LoRA-Refine-Details",
+    "name": "ltx-2.5-22b-ic-lora-refine-details-1.0.safetensors",
+    "size": 1308787534,
+    "dir": "loras",
+    "sha": "771a84f70e143af89867fc714ebbf7bd6edcaa4974c0360cba4a2d292a99f0e6",
+    "mode": "refine"
+  }
+]

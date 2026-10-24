@@ -1,0 +1,1 @@
+body.draggingFiles::after{content:attr(data-drop-message);position:fixed;inset:18px;z-index:10000;pointer-events:none;border:3px dashed #f2ff59;border-radius:18px;background:#211927e8;color:#f2ff59;display:grid;place-items:center;font-size:clamp(24px,4vw,44px);font-weight:700;text-align:center;padding:24px;box-shadow:0 0 0 18px #21192766}

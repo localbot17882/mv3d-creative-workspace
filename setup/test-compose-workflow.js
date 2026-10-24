@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict'),{buildCompose,checkedCompose}=require('../App/resources/app/compose-workflow'),graph=require('../App/resources/app/canvas-graph'),characters=require('../App/resources/app/canvas-character-elements');
+const s={...graph.settings('compose'),width:768,height:432};
+const built=buildCompose('background.png','person.png',s),nodes=Object.entries(built.graph),refs=nodes.filter(([,n])=>n.class_type==='ReferenceLatent');
+assert.equal(refs.length,2);assert.deepEqual(refs[1][1].inputs.conditioning,[refs[0][0],0]);
+assert.deepEqual(nodes.filter(([,n])=>n.class_type==='LoadImage').map(([,n])=>n.inputs.image),['background.png','person.png']);
+assert.equal(built.graph['18'].class_type,'SaveImage');assert(!nodes.some(([,n])=>/Video/.test(n.class_type)));
+assert(nodes.find(([,n])=>n.class_type==='CLIPTextEncode')[1].inputs.text.includes('Image 1 is the background'));
+for(const bad of [{width:513},{height:2048},{steps:0},{seed:-1},{position:'outside'},{subjectSize:'giant'},{prompt:''}])assert.throws(()=>checkedCompose({...s,...bad}));
+const detailed=buildCompose('background.png','person.png',s,['front.png','side.png','ignored.png']);assert.equal(Object.values(detailed.graph).filter(n=>n.class_type==='ReferenceLatent').length,4);assert(Object.values(detailed.graph).find(n=>n.class_type==='CLIPTextEncode').inputs.text.includes('SAME person'));assert.equal(Object.values(buildCompose('b.png','p.png',{...s,useDetails:false},['f.png']).graph).filter(n=>n.class_type==='ReferenceLatent').length,2);
+const asset={id:'asset',character:{id:'person',name:'Alex'}},p={assets:[asset],nodes:[{id:'bg',type:'image',asset:'background',x:20,y:20,settings:{}},{id:'scene',type:'compose',x:340,y:20,settings:s}],edges:[{from:'bg',to:'scene',port:'background'}]};
+assert(characters.attach(p,asset,'scene','actor').connected);graph.validate(p,true);assert.equal(p.edges.find(e=>e.from==='actor').port,'character');
+assert.throws(()=>graph.validate({...p,edges:p.edges.filter(e=>e.port!=='background')},true),/background/);
+console.log('Compose: two ordered references, chained conditioning, image-only output, validated settings, @character binding and required background passed.');

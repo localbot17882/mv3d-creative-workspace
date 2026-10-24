@@ -1,0 +1,44 @@
+'use strict';
+const fs=require('node:fs/promises'),sync=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const {Readable,Transform}=require('node:stream'),{pipeline}=require('node:stream/promises');
+const catalog=require('./model-catalog');
+module.exports=function({root,ipcMain,shell,isBusy=()=>false,reserve=()=>{},send=()=>{},token=async()=>'',queue=async()=>{},notify=()=>{},request=fetch,models=catalog.all(root)}){
+ const cacheFile=path.join(root,'Data/model-updates.json'),versionsFile=path.join(root,'Data/model-versions.json'),prefsFile=path.join(root,'Data/model-update-preferences.json');let working=false,cancel=null;
+ const local=m=>path.join(root,'ComfyUI/models',m.dir,m.file);
+ async function read(file,fallback){try{return JSON.parse(await fs.readFile(file,'utf8'));}catch{return fallback;}}
+ async function write(file,data){await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file+'.tmp',JSON.stringify(data,null,2));await fs.rename(file+'.tmp',file);}
+ function idle(){if(working||isBusy())throw Error('Wait for the current generation or download to finish.');}
+ async function initial(){return {checked:null,models:await Promise.all(models.map(async m=>({id:catalog.id(m),name:m.name||m.file,repo:m.repo||null,url:m.repo?'https://huggingface.co/'+m.repo:m.url,installed:await fs.stat(local(m)).then(s=>s.isFile()).catch(()=>false),status:'unchecked'})))};}
+ async function preferences(){return {notifications:true,...await read(prefsFile,{})};}
+ async function status(){return {...await read(cacheFile,await initial()),working,preferences:await preferences()};}
+ async function announce(result){const updates=result.models.filter(m=>m.status==='available'),prefs=await preferences(),seen=Array.isArray(prefs.notified)?prefs.notified:[],keys=updates.map(m=>m.id+':'+m.latest.sha);if(!prefs.notifications||!keys.some(k=>!seen.includes(k)))return;try{notify(updates.length);await write(prefsFile,{...prefs,notified:[...new Set([...seen,...keys])].slice(-100)});}catch{} }
+ function startAutoCheck(){let firstRun=true;const tick=async()=>{try{if(working||isBusy())return;const cache=await read(cacheFile,{});if(firstRun||!cache.checked||Date.now()-Date.parse(cache.checked)>6*60*60*1000){await check();firstRun=false;}}catch{}};const first=setTimeout(tick,2000);first.unref?.();const timer=setInterval(tick,60000);timer.unref?.();}
+
+ async function check(){idle();working=true;send({type:'checking'});try{
+  const result=await initial(),repos=new Map(),auth=await token();
+  for(const m of models)if(m.repo&&result.models.find(r=>r.id===catalog.id(m)).installed)repos.set(m.repo,null);
+  const pending=[...repos.keys()];async function worker(){while(pending.length){const repo=pending.shift();try{const r=await request('https://huggingface.co/api/models/'+repo+'?blobs=true',{headers:auth?{Authorization:'Bearer '+auth}:{},signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error([401,403].includes(r.status)?'Access required. Accept the model licence on Hugging Face and save your read token in Video settings.':'Repository request failed (HTTP '+r.status+').');repos.set(repo,{data:await r.json()});}catch(e){repos.set(repo,{error:e.message});}}}await Promise.all([worker(),worker()]);
+  const versions=await read(versionsFile,{});
+  for(let i=0;i<models.length;i++){const m=models[i],r=result.models[i];if(!r.installed){r.status='not_installed';continue;}if(!m.repo){r.status='manual';r.message='This fixed download has no automatic version feed.';continue;}const repo=repos.get(m.repo);if(repo.error){r.status='unavailable';r.message=repo.error;continue;}
+   const info=repo.data,file=info.siblings?.find(f=>f.rfilename===(m.remote||m.file)),sha=file?.lfs?.sha256,size=file?.size||file?.lfs?.size;
+   if(!file||!sha||!Number.isSafeInteger(size)||!/^[a-f0-9]{40}$/.test(info.sha||'')){r.status='unavailable';r.message='The tracked weight file or its verified metadata is unavailable.';continue;}
+   const baseline=versions[r.id]||m,stat=await fs.stat(local(m));r.installedSha=baseline.sha;r.latest={sha,size,rev:info.sha};r.size=size;r.updated=info.lastModified||null;
+   if(stat.size!==baseline.size){r.status='unknown';r.message='Local file differs from the recorded size. It needs verification before an update.';continue;}
+   r.status=sha===baseline.sha?'current':'available';r.message=r.status==='current'?'Tracked weight file matches the recorded installed version.':'A different revision of this weight file is available. Compatibility must be reviewed.';
+  }result.checked=new Date().toISOString();await write(cacheFile,result);await announce(result);send({type:'checked',result});return result;
+ }finally{working=false;send({type:'idle'});}}
+ async function update(id){idle();working=true;reserve(true);cancel=new AbortController();let dest,tmp,backup=null,replaced=false;
+  try{const m=models.find(m=>catalog.id(m)===id),cache=await read(cacheFile,{}),entry=cache.models?.find(e=>e.id===id);if(!m||entry?.status!=='available'||!entry.latest)throw Error('Check for model updates first.');const v=entry.latest;if(!/^[a-f0-9]{64}$/.test(v.sha)||!/^[a-f0-9]{40}$/.test(v.rev)||!Number.isSafeInteger(v.size)||v.size<=0)throw Error('Invalid model metadata.');dest=local(m);tmp=dest+'.comfylab-update.part';await queue();const baseline=(await read(versionsFile,{}))[id]||m,stat=await fs.stat(dest);if(stat.size!==baseline.size)throw Error('The local model changed. Check updates again.');const disk=await fs.statfs(path.dirname(dest));if(disk.bavail*disk.bsize<v.size+512*1024*1024)throw Error('Not enough free disk space for the download and previous version.');
+   send({type:'download',id,percent:0,message:'Downloading '+m.file});const auth=await token(),r=await request('https://huggingface.co/'+m.repo+'/resolve/'+v.rev+'/'+(m.remote||m.file),{headers:auth?{Authorization:'Bearer '+auth}:{},signal:cancel.signal});if(!r.ok)throw Error([401,403].includes(r.status)?'Hugging Face access is required for this model.':'Download failed (HTTP '+r.status+').');
+   let bytes=0,last=0;const h=crypto.createHash('sha256'),started=Date.now();const meter=new Transform({transform(chunk,enc,cb){bytes+=chunk.length;if(bytes>v.size)return cb(Error('Downloaded file exceeds its expected size.'));h.update(chunk);if(Date.now()-last>500){last=Date.now();send({type:'download',id,percent:bytes/v.size*100,etaSeconds:bytes?Math.max(0,(v.size-bytes)/bytes*(Date.now()-started)/1000):null,message:'Downloading '+m.file});}cb(null,chunk);}});
+   await pipeline(Readable.fromWeb(r.body),meter,sync.createWriteStream(tmp),{signal:cancel.signal});if(bytes!==v.size||h.digest('hex')!==v.sha)throw Error('Download verification failed. The installed model was kept.');
+   // Recheck the queue immediately before replacing any installed weights.
+   await queue();backup=path.join(root,'Backups/model-updates',crypto.randomUUID(),m.file);await fs.mkdir(path.dirname(backup),{recursive:true});await fs.rename(dest,backup);try{await fs.rename(tmp,dest);replaced=true;const versions=await read(versionsFile,{});versions[id]={...v,backup,installed:new Date().toISOString()};await write(versionsFile,versions);}catch(e){if(replaced)await fs.rm(dest,{force:true});await fs.rename(backup,dest);backup=null;throw e;}
+   catalog.apply(root);Object.assign(m,v);entry.status='current';entry.installedSha=v.sha;entry.message='Updated and verified. Restart ComfyUI before generating. Previous weights were saved in Backups/model-updates.';cache.restartRequired=true;await write(cacheFile,cache);send({type:'updated',id,result:cache});return cache;
+  }catch(e){send({type:'error',message:e.name==='AbortError'?'Download cancelled. The installed model was kept.':e.message});throw e;}finally{if(tmp)await fs.rm(tmp,{force:true}).catch(()=>{});cancel=null;working=false;reserve(false);send({type:'idle'});}
+ }
+ ipcMain.handle('model-updates-preferences',async(_,raw)=>{if(typeof raw?.notifications!=='boolean')throw Error('Choose notification preference.');const p={...await preferences(),notifications:raw.notifications};await write(prefsFile,p);return p;});
+ ipcMain.handle('model-updates-restarted',async()=>{const cache=await read(cacheFile,{});cache.restartRequired=false;await write(cacheFile,cache);return cache;});
+ ipcMain.handle('model-updates-status',()=>status());ipcMain.handle('model-updates-check',()=>check());ipcMain.handle('model-updates-install',(_,id)=>update(id));ipcMain.handle('model-updates-cancel',()=>{cancel?.abort();return true;});ipcMain.handle('model-updates-open',async(_,id)=>{const m=models.find(m=>catalog.id(m)===id);if(!m)throw Error('Unknown model.');await shell.openExternal(m.repo?'https://huggingface.co/'+m.repo:m.url);return true;});
+ return {check,update,status,startAutoCheck,register:m=>{if(!models.some(old=>catalog.id(old)===catalog.id(m)))models.push(m);},busy:()=>working};
+};

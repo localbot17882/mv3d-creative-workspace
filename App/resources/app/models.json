@@ -1,0 +1,147 @@
+[
+  {
+    "name": "flux-2-klein-4b.safetensors",
+    "file": "flux-2-klein-4b.safetensors",
+    "dir": "diffusion_models",
+    "repo": "Comfy-Org/flux2-klein-4B",
+    "rev": "5f526678002e43af5551dadb73ce2e8c91b43afe",
+    "remote": "split_files/diffusion_models/flux-2-klein-4b.safetensors",
+    "size": 7751105712,
+    "sha": "ec3d4e733a771f61c052fb4856c48b336c55eaf2c65487c2a1faeb9bbda7a343",
+    "modes": [
+      "klein",
+      "tiled"
+    ]
+  },
+  {
+    "name": "qwen_3_4b.safetensors",
+    "file": "qwen_3_4b.safetensors",
+    "dir": "text_encoders",
+    "repo": "Comfy-Org/flux2-klein-4B",
+    "rev": "5f526678002e43af5551dadb73ce2e8c91b43afe",
+    "remote": "split_files/text_encoders/qwen_3_4b.safetensors",
+    "size": 8044982048,
+    "sha": "6c671498573ac2f7a5501502ccce8d2b08ea6ca2f661c458e708f36b36edfc5a",
+    "modes": [
+      "klein",
+      "tiled",
+      "characters"
+    ]
+  },
+  {
+    "name": "flux2-vae.safetensors",
+    "file": "flux2-vae.safetensors",
+    "dir": "vae",
+    "repo": "Comfy-Org/flux2-klein-4B",
+    "rev": "5f526678002e43af5551dadb73ce2e8c91b43afe",
+    "remote": "split_files/vae/flux2-vae.safetensors",
+    "size": 336211292,
+    "sha": "868fe7b343cc8f3a19dbcfcafbc3d5f888802be3f89bd81b65b3621a066ce8f3",
+    "modes": [
+      "klein",
+      "tiled"
+    ]
+  },
+  {
+    "name": "seedvr2_3b_int8_convrot.safetensors",
+    "file": "seedvr2_3b_int8_convrot.safetensors",
+    "dir": "diffusion_models",
+    "repo": "Comfy-Org/SeedVR2",
+    "rev": "df48879708206a403d2a61acd55578c2e80fd233",
+    "remote": "diffusion_models/seedvr2_3b_int8_convrot.safetensors",
+    "size": 3458259704,
+    "sha": "c3dec8bcc5916843a8a858572970597462e1f2dc598d6dfd818f6cd40f53a157",
+    "modes": [
+      "seedvr2"
+    ]
+  },
+  {
+    "name": "seedvr2_ema_vae_fp16.safetensors",
+    "file": "seedvr2_ema_vae_fp16.safetensors",
+    "dir": "vae",
+    "repo": "Comfy-Org/SeedVR2",
+    "rev": "df48879708206a403d2a61acd55578c2e80fd233",
+    "remote": "vae/seedvr2_ema_vae_fp16.safetensors",
+    "size": 501324814,
+    "sha": "20678548f420d98d26f11442d3528f8b8c94e57ee046ef93dbb7633da8612ca1",
+    "modes": [
+      "seedvr2"
+    ]
+  },
+  {
+    "name": "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors",
+    "file": "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors",
+    "dir": "checkpoints",
+    "repo": "RunDiffusion/Juggernaut-XL-v9",
+    "rev": "cf419233522daa0b9ea36c3aff98fa2cab1fb0fb",
+    "remote": "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors",
+    "size": 7105348188,
+    "sha": "c9e3e68f89b8e38689e1097d4be4573cf308de4e3fd044c64ca697bdb4aa8bca",
+    "modes": [
+      "people"
+    ]
+  },
+  {
+    "name": "person_yolov8m-seg.pt",
+    "file": "person_yolov8m-seg.pt",
+    "dir": "ultralytics/segm",
+    "repo": "Bingsu/adetailer",
+    "rev": "53cc19de382014514d9d4038601d261a7faa9b7b",
+    "remote": "person_yolov8m-seg.pt",
+    "size": 54827683,
+    "sha": "c8ab26f517173b1fe8342d336a09f443eb61cb08dcbfc78d53fff4c2547ae81e",
+    "modes": [
+      "people"
+    ]
+  },
+  {
+    "name": "xinsir-tile-sdxl-1.0.safetensors",
+    "file": "xinsir-tile-sdxl-1.0.safetensors",
+    "dir": "controlnet",
+    "repo": "xinsir/controlnet-tile-sdxl-1.0",
+    "rev": "1ae8d9529efe58f7362a987363ff86a7904dc84f",
+    "remote": "diffusion_pytorch_model.safetensors",
+    "size": 2502139104,
+    "sha": "9f23ba7be22bf8796c12565e00ea4b287acac982cdf384d368a8b18b6990e011",
+    "modes": [
+      "people"
+    ]
+  },
+  {
+    "name": "sam_vit_b_01ec64.pth",
+    "file": "sam_vit_b_01ec64.pth",
+    "dir": "sams",
+    "url": "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth",
+    "size": 375042383,
+    "sha": "ec2df62732614e57411cdcf32a23ffdf28910380d03139ee0f4fcbe91eb8c912",
+    "modes": [
+      "people"
+    ]
+  },
+  {
+    "name": "z_image_turbo_bf16.safetensors",
+    "file": "z_image_turbo_bf16.safetensors",
+    "dir": "diffusion_models",
+    "repo": "Comfy-Org/z_image_turbo",
+    "rev": "6fc90a3b1b653e935a0d175e260736de25b84df5",
+    "remote": "split_files/diffusion_models/z_image_turbo_bf16.safetensors",
+    "size": 12309866400,
+    "sha": "2407613050b809ffdff18a4ac99af83ea6b95443ecebdf80e064a79c825574a6",
+    "modes": [
+      "characters"
+    ]
+  },
+  {
+    "name": "ae.safetensors",
+    "file": "ae.safetensors",
+    "dir": "vae",
+    "repo": "Comfy-Org/z_image_turbo",
+    "rev": "6fc90a3b1b653e935a0d175e260736de25b84df5",
+    "remote": "split_files/vae/ae.safetensors",
+    "size": 335304388,
+    "sha": "afc8e28272cd15db3919bacdb6918ce9c1ed22e96cb12c4d5ed0fba823529e38",
+    "modes": [
+      "characters"
+    ]
+  }
+]
